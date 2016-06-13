@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Document</title>
+	<script src="date.js"></script>
+</head>
+<style>
+
+
+	body{
+		background: #000;
+
+	}
+	.big{
+		height:600px;
+		width:1400px;
+		left:0;
+		background:#000;
+		position: fixed;
+		top:0;
+		background: #000;
+	}
+	.bei{
+		height:427px;
+		width:650px; 
+		margin:auto;
+		top:0;
+		left:0;
+		right:0;
+		bottom: 0;  	
+		position:absolute;
+	}
+	.play{
+		height:35px;
+		width:100px;
+		position: absolute;
+		top:179px;
+		left:380px;
+	}
+
+	.box{
+		height:550px;
+		width:1050px;
+		position: relative;
+		overflow: hidden;
+		left:300px;
+		background: #000;
+	}
+	img{
+		height:550px;
+		width:1350px;
+	}
+	.zi{
+		display:inline-block;
+		background:url(img/伞兵.png) center center no-repeat;
+		padding:85px 30px;
+		font-size:50px;
+		position: absolute;
+		color:#fff;
+		font-weight: bold;
+	}
+
+	.baiyun{
+		width:249px;
+		height:106px;
+		position: absolute;
+		top:20px;
+		left:10px;
+		background: url(img/baiyun.png)no-repeat;
+	}
+	.tuichu{
+		width:250px;
+		height:150px;
+		background: url(img/白云1.png)no-repeat;
+		position: absolute;
+		top:230px;
+		left:10px;
+	}
+</style>
+<body>
+
+	<div class="box">	
+	</div>
+	<div class="baiyun">
+	</div>
+	<div class="tuichu">
+
+	</div>	
+	<div class="big">
+		<img src="img/打字游戏.jpg" alt="" class="bei">
+		<div class="play"></div>
+	</div>
+	
+</body>
+	<script src="./jquery-1.12.0.js"></script>
+<script>
+	// document.onkeydown=function(e){
+	// 	console.log('down',e)
+	// }
+	// document.onkeypress=function(e){
+	// 	console.log('press',e)
+	// }
+	// document.onkeyup=function(e){
+	// 	console.log('up',e)
+	// }
+	// var obj={}
+	// for(var i=10000;i<11000;i++){
+	// 	console.log(i,String.fromCharCode(i))
+	// }
+	// var obj={}
+	// for(var i=10000;i<10200;i++){
+	// 	obj[i]=String.fromCharCode(i)
+	// }
+	// console.log(JSON.stringify(obj))   
+
+
+	var box=document.querySelector('.box')   //先选出盒子
+	   //只会找到第一个对象
+	document.onkeyup=function(e){   //在document上添加onkeyup事件 
+		var key=String.fromCharCode(e.keyCode).toLowerCase()  //转换为字母须用fromCharCode转换再转换为小写
+		if(key==='a'){
+			box.removeChild(box.lfirstElementChild)  //移除掉第一个子元素
+			var el=document.createElement('div')  //再创建一个
+			el.className='zi'  //放到页面中
+			el.innerHTML=String.fromCharCode(Math.floor(Math.random()*25+97));  //取随机数，转换为整数  再转换为字母
+			box.appendChild(el)
+		}
+	}      //
+
+// 随机出来一个字母
+var box=document.querySelector('.box');
+var zimujihe={}
+var shuliang=5;
+var creatzimu=function(){ 
+  	do{
+  	var zimu=String.fromCharCode(Math.floor(Math.random()*26+97));//生成一个随机的字母
+  }while(zimujihe[zimu]);
+	var el=document.createElement('div')  //放一个div
+		el.classList.add('zi');  //调用
+		el.innerHTML=zimu    //往进去放字
+
+		box.appendChild(el)   //往进去放东西
+		el.style.left=Math.floor(Math.random()*(box.offsetWidth-el.offsetWidth))+'px'
+		var ran=Math.ceil(Math.random()*4)		
+		zimujihe[zimu]={top:0,yuansu:el,off:ran}  //把dom对象做值放到el里
+		// console.log(zimujihe)
+}
+for(i=0;i<shuliang;i++){
+	creatzimu();
+}
+var removezimu=function(zimu){   //移除哪个字母，定义形参写什么都可以
+	var el=zimujihe[zimu].yuansu //拿出来
+   el.parentElement.removeChild(el)
+   delete zimujihe[zimu]
+}
+ 
+document.onkeyup=function(e){
+	if(e.keyCode==32){
+		toggleGame()	
+	}
+	var key=String.fromCharCode(e.keyCode).toLowerCase()  
+   if(zimujihe[key]){
+	removezimu(key);
+	creatzimu()
+  }
+}
+var xx=box.offsetHeight
+ var diao=function(){
+ 	var zimu=[]
+	for(var i in zimujihe){  //不要在遍历对象的时候删除对象的元素
+		var data=zimujihe[i]
+		var el=data.yuansu;
+		data.top+=data.off;
+		el.style.top=data.top+'px'
+		if(data.top>xx){  //看有没有掉到底
+		zimu.push(i)	//把i添加到数组中	
+     }	
+}	
+ if(zimu.length){  //如果不等于0调用0
+ 	for(var i=0;i<zimu.length;i++)
+	removezimu(zimu[i])
+	creatzimu() 
+	}
+}
+var timeId=setInterval(diao,30)  //时间编号
+var toggleGame=function(){
+	if(timeId){
+		clearInterval(timeId)
+		timeId=null
+	}else{
+		timeId=setInterval(diao,30)
+	}
+}
+		toggleGame()	
+		$('.play').bind('click',function(){
+			// $('.box')
+			// .('display','block')
+			$('.big').css('display','none')
+		timeId=setInterval(diao,30)
+
+		})
+
+		$('.tuichu').bind('click',function(){
+			$('.big' ).css('display','block')
+		})
+</script>
+</html>
+
+<!-- 
+用字母集合的表有多少个
+字母做介div做值
+创建字母
+放到页面中 -->
